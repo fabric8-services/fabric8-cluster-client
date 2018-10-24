@@ -79,11 +79,6 @@ else
 	cd ${CLIENT_DIR}/ && go build -v -o ${BINARY_CLIENT_BIN}
 endif
 
-
-# These are binary tools from our vendored packages
-$(GOAGEN_BIN): $(VENDOR_DIR)
-	cd $(VENDOR_DIR)/github.com/goadesign/goa/goagen && go build -v
-
 CLEAN_TARGETS += clean-artifacts
 .PHONY: clean-artifacts
 ## Removes the ./bin directory.
