@@ -18,6 +18,7 @@ DEP_BIN_DIR := ./tmp/bin
 DEP_BIN := $(DEP_BIN_DIR)/$(DEP_BIN_NAME)
 DEP_VERSION=v0.4.1
 GO_BIN := $(shell command -v $(GO_BIN_NAME) 2> /dev/null)
+DOCKER_BIN := $(shell command -v $(DOCKER_BIN_NAME) 2> /dev/null)
 
 # Define and get the vakue for UNAME_S variable from shell
 UNAME_S := $(shell uname -s)
@@ -29,6 +30,12 @@ PACKAGE_NAME := github.com/fabric8-services/fabric8-cluster-client
 
 # For the global "clean" target all targets in this variable will be executed
 CLEAN_TARGETS =
+
+ifneq ($(OS),Windows_NT)
+ifdef DOCKER_BIN
+include ./.make/docker.mk
+endif
+endif
 
 # Call this function with $(call log-info,"Your message")
 define log-info =
