@@ -5,15 +5,13 @@
 // Command:
 // $ goagen
 // --design=github.com/fabric8-services/fabric8-cluster/design
-// --out=$(GOPATH)/src/github.com/fabric8-services/fabric8-cluster-client
+// --out=$(GOPATH)/src/github.com/fabric8-services/fabric8-cluster
 // --pkg=cluster
 // --version=v1.3.0
 
 package cluster
 
-import (
-	"github.com/goadesign/goa"
-)
+import "github.com/goadesign/goa"
 
 // clusterData user type.
 type clusterData struct {
@@ -125,6 +123,197 @@ func (ut *ClusterData) Validate() (err error) {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "app-dns"))
 	}
 
+	return
+}
+
+// fullClusterData user type.
+type fullClusterData struct {
+	// API URL
+	APIURL *string `form:"api-url,omitempty" json:"api-url,omitempty" xml:"api-url,omitempty"`
+	// User application domain name in the cluster
+	AppDNS *string `form:"app-dns,omitempty" json:"app-dns,omitempty" xml:"app-dns,omitempty"`
+	// OAuth client default scope
+	AuthClientDefaultScope *string `form:"auth-client-default-scope,omitempty" json:"auth-client-default-scope,omitempty" xml:"auth-client-default-scope,omitempty"`
+	// OAuth client ID
+	AuthClientID *string `form:"auth-client-id,omitempty" json:"auth-client-id,omitempty" xml:"auth-client-id,omitempty"`
+	// OAuth client secret
+	AuthClientSecret *string `form:"auth-client-secret,omitempty" json:"auth-client-secret,omitempty" xml:"auth-client-secret,omitempty"`
+	// Cluster is full if set to 'true'
+	CapacityExhausted *bool `form:"capacity-exhausted,omitempty" json:"capacity-exhausted,omitempty" xml:"capacity-exhausted,omitempty"`
+	// Web console URL
+	ConsoleURL *string `form:"console-url,omitempty" json:"console-url,omitempty" xml:"console-url,omitempty"`
+	// Logging URL
+	LoggingURL *string `form:"logging-url,omitempty" json:"logging-url,omitempty" xml:"logging-url,omitempty"`
+	// Metrics URL
+	MetricsURL *string `form:"metrics-url,omitempty" json:"metrics-url,omitempty" xml:"metrics-url,omitempty"`
+	// Cluster name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Decrypted cluster wide token
+	ServiceAccountToken *string `form:"service-account-token,omitempty" json:"service-account-token,omitempty" xml:"service-account-token,omitempty"`
+	// Username of the cluster wide user
+	ServiceAccountUsername *string `form:"service-account-username,omitempty" json:"service-account-username,omitempty" xml:"service-account-username,omitempty"`
+	// Token provider ID
+	TokenProviderID *string `form:"token-provider-id,omitempty" json:"token-provider-id,omitempty" xml:"token-provider-id,omitempty"`
+}
+
+// Validate validates the fullClusterData type instance.
+func (ut *fullClusterData) Validate() (err error) {
+	if ut.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "name"))
+	}
+	if ut.ConsoleURL == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "console-url"))
+	}
+	if ut.MetricsURL == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "metrics-url"))
+	}
+	if ut.APIURL == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "api-url"))
+	}
+	if ut.LoggingURL == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "logging-url"))
+	}
+	if ut.AppDNS == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "app-dns"))
+	}
+	if ut.CapacityExhausted == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "capacity-exhausted"))
+	}
+	if ut.ServiceAccountToken == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "service-account-token"))
+	}
+	if ut.ServiceAccountUsername == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "service-account-username"))
+	}
+	if ut.TokenProviderID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "token-provider-id"))
+	}
+	if ut.AuthClientID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "auth-client-id"))
+	}
+	if ut.AuthClientSecret == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "auth-client-secret"))
+	}
+	if ut.AuthClientDefaultScope == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "auth-client-default-scope"))
+	}
+	return
+}
+
+// Publicize creates FullClusterData from fullClusterData
+func (ut *fullClusterData) Publicize() *FullClusterData {
+	var pub FullClusterData
+	if ut.APIURL != nil {
+		pub.APIURL = *ut.APIURL
+	}
+	if ut.AppDNS != nil {
+		pub.AppDNS = *ut.AppDNS
+	}
+	if ut.AuthClientDefaultScope != nil {
+		pub.AuthClientDefaultScope = *ut.AuthClientDefaultScope
+	}
+	if ut.AuthClientID != nil {
+		pub.AuthClientID = *ut.AuthClientID
+	}
+	if ut.AuthClientSecret != nil {
+		pub.AuthClientSecret = *ut.AuthClientSecret
+	}
+	if ut.CapacityExhausted != nil {
+		pub.CapacityExhausted = *ut.CapacityExhausted
+	}
+	if ut.ConsoleURL != nil {
+		pub.ConsoleURL = *ut.ConsoleURL
+	}
+	if ut.LoggingURL != nil {
+		pub.LoggingURL = *ut.LoggingURL
+	}
+	if ut.MetricsURL != nil {
+		pub.MetricsURL = *ut.MetricsURL
+	}
+	if ut.Name != nil {
+		pub.Name = *ut.Name
+	}
+	if ut.ServiceAccountToken != nil {
+		pub.ServiceAccountToken = *ut.ServiceAccountToken
+	}
+	if ut.ServiceAccountUsername != nil {
+		pub.ServiceAccountUsername = *ut.ServiceAccountUsername
+	}
+	if ut.TokenProviderID != nil {
+		pub.TokenProviderID = *ut.TokenProviderID
+	}
+	return &pub
+}
+
+// FullClusterData user type.
+type FullClusterData struct {
+	// API URL
+	APIURL string `form:"api-url" json:"api-url" xml:"api-url"`
+	// User application domain name in the cluster
+	AppDNS string `form:"app-dns" json:"app-dns" xml:"app-dns"`
+	// OAuth client default scope
+	AuthClientDefaultScope string `form:"auth-client-default-scope" json:"auth-client-default-scope" xml:"auth-client-default-scope"`
+	// OAuth client ID
+	AuthClientID string `form:"auth-client-id" json:"auth-client-id" xml:"auth-client-id"`
+	// OAuth client secret
+	AuthClientSecret string `form:"auth-client-secret" json:"auth-client-secret" xml:"auth-client-secret"`
+	// Cluster is full if set to 'true'
+	CapacityExhausted bool `form:"capacity-exhausted" json:"capacity-exhausted" xml:"capacity-exhausted"`
+	// Web console URL
+	ConsoleURL string `form:"console-url" json:"console-url" xml:"console-url"`
+	// Logging URL
+	LoggingURL string `form:"logging-url" json:"logging-url" xml:"logging-url"`
+	// Metrics URL
+	MetricsURL string `form:"metrics-url" json:"metrics-url" xml:"metrics-url"`
+	// Cluster name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Decrypted cluster wide token
+	ServiceAccountToken string `form:"service-account-token" json:"service-account-token" xml:"service-account-token"`
+	// Username of the cluster wide user
+	ServiceAccountUsername string `form:"service-account-username" json:"service-account-username" xml:"service-account-username"`
+	// Token provider ID
+	TokenProviderID string `form:"token-provider-id" json:"token-provider-id" xml:"token-provider-id"`
+}
+
+// Validate validates the FullClusterData type instance.
+func (ut *FullClusterData) Validate() (err error) {
+	if ut.Name == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "name"))
+	}
+	if ut.ConsoleURL == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "console-url"))
+	}
+	if ut.MetricsURL == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "metrics-url"))
+	}
+	if ut.APIURL == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "api-url"))
+	}
+	if ut.LoggingURL == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "logging-url"))
+	}
+	if ut.AppDNS == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "app-dns"))
+	}
+
+	if ut.ServiceAccountToken == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "service-account-token"))
+	}
+	if ut.ServiceAccountUsername == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "service-account-username"))
+	}
+	if ut.TokenProviderID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "token-provider-id"))
+	}
+	if ut.AuthClientID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "auth-client-id"))
+	}
+	if ut.AuthClientSecret == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "auth-client-secret"))
+	}
+	if ut.AuthClientDefaultScope == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "auth-client-default-scope"))
+	}
 	return
 }
 

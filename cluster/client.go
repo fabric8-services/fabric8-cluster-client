@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/fabric8-services/fabric8-cluster/design
-// --out=$(GOPATH)/src/github.com/fabric8-services/fabric8-cluster-client
+// --out=$(GOPATH)/src/github.com/fabric8-services/fabric8-cluster
 // --pkg=cluster
 // --version=v1.3.0
 
