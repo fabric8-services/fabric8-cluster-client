@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/fabric8-services/fabric8-cluster/design
-// --out=$(GOPATH)/src/github.com/fabric8-services/fabric8-cluster-client
+// --out=$(GOPATH)/src/github.com/fabric8-services/fabric8-cluster
 // --pkg=cluster
 // --version=v1.3.0
 
@@ -35,6 +35,38 @@ func (c *Client) ShowClusters(ctx context.Context, path string) (*http.Response,
 
 // NewShowClustersRequest create the request corresponding to the show action endpoint of the clusters resource.
 func (c *Client) NewShowClustersRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		c.JWTSigner.Sign(req)
+	}
+	return req, nil
+}
+
+// ShowAuthClientClustersPath computes a request path to the showAuthClient action of clusters.
+func ShowAuthClientClustersPath() string {
+
+	return fmt.Sprintf("/api/clusters/auth")
+}
+
+// Get full cluster configuration including Auth information
+func (c *Client) ShowAuthClientClusters(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewShowAuthClientClustersRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewShowAuthClientClustersRequest create the request corresponding to the showAuthClient action endpoint of the clusters resource.
+func (c *Client) NewShowAuthClientClustersRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"

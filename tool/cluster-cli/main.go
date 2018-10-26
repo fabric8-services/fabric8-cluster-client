@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/fabric8-services/fabric8-cluster-client/cluster"
-	"github.com/fabric8-services/fabric8-cluster-client/tool/cli"
+	"github.com/fabric8-services/fabric8-cluster/tool/cli"
 	goaclient "github.com/goadesign/goa/client"
 	"github.com/spf13/cobra"
 	"net/http"
