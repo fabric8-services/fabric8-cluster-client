@@ -32,6 +32,11 @@ type (
 		PrettyPrint bool
 	}
 
+	// ShowAuthClientClustersCommand is the command line data structure for the showAuthClient action of clusters
+	ShowAuthClientClustersCommand struct {
+		PrettyPrint bool
+	}
+
 	// ShowStatusCommand is the command line data structure for the show action of status
 	ShowStatusCommand struct {
 		PrettyPrint bool
@@ -62,6 +67,20 @@ func RegisterCommands(app *cobra.Command, c *cluster.Client) {
 	}
 	tmp2.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show-auth-client",
+		Short: `Get full cluster configuration including Auth information`,
+	}
+	tmp3 := new(ShowAuthClientClustersCommand)
+	sub = &cobra.Command{
+		Use:   `clusters ["/api/clusters/auth"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+	}
+	tmp3.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -241,6 +260,30 @@ func (cmd *ShowClustersCommand) Run(c *cluster.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *ShowClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
+}
+
+// Run makes the HTTP request corresponding to the ShowAuthClientClustersCommand command.
+func (cmd *ShowAuthClientClustersCommand) Run(c *cluster.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/api/clusters/auth"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ShowAuthClientClusters(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ShowAuthClientClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
 }
 
 // Run makes the HTTP request corresponding to the ShowStatusCommand command.

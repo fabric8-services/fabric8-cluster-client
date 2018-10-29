@@ -47,6 +47,37 @@ func (c *Client) DecodeClusterList(resp *http.Response) (*ClusterList, error) {
 	return &decoded, err
 }
 
+// Holds the response to a full cluster list request (default view)
+//
+// Identifier: application/vnd.fullclusterlist+json; view=default
+type FullClusterList struct {
+	Data []*FullClusterData `form:"data" json:"data" xml:"data"`
+	// An array of mixed types
+	Included []interface{} `form:"included,omitempty" json:"included,omitempty" xml:"included,omitempty"`
+}
+
+// Validate validates the FullClusterList media type instance.
+func (mt *FullClusterList) Validate() (err error) {
+	if mt.Data == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "data"))
+	}
+	for _, e := range mt.Data {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// DecodeFullClusterList decodes the FullClusterList instance encoded in resp body.
+func (c *Client) DecodeFullClusterList(resp *http.Response) (*FullClusterList, error) {
+	var decoded FullClusterList
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
 // JSONAPIErrors media type (default view)
 //
 // Identifier: application/vnd.jsonapierrors+json; view=default
