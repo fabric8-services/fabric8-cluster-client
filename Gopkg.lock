@@ -32,7 +32,6 @@
     "client",
     "cors",
     "design",
-    "design/apidsl",
     "dslengine",
     "encoding/form",
     "goagen",
@@ -123,6 +122,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "04d51b86bc0c6221d08507843a9147782580e05385cf7849fc09c62ea68f16c9"
+  inputs-digest = "0cdafd949fe0413833aab58356da4424a9aaa67cf91bcc08fd0641c7a839b83f"
   solver-name = "gps-cdcl"
   solver-version = 1

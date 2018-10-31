@@ -36,7 +36,6 @@ required = [
   "github.com/goadesign/goa/goagen/gen_js",
   "github.com/goadesign/goa/goagen/utils",
   "github.com/goadesign/goa/goatest",
-  "github.com/fabric8-services/fabric8-cluster/design",
 ]
 
 [[constraint]]
