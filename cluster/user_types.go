@@ -29,6 +29,8 @@ type clusterData struct {
 	MetricsURL *string `form:"metrics-url,omitempty" json:"metrics-url,omitempty" xml:"metrics-url,omitempty"`
 	// Cluster name
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Cluster type. Such as OSD, OSO, OCP, etc
+	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
 }
 
 // Validate validates the clusterData type instance.
@@ -50,6 +52,9 @@ func (ut *clusterData) Validate() (err error) {
 	}
 	if ut.AppDNS == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "app-dns"))
+	}
+	if ut.Type == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "type"))
 	}
 	if ut.CapacityExhausted == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "capacity-exhausted"))
@@ -81,6 +86,9 @@ func (ut *clusterData) Publicize() *ClusterData {
 	if ut.Name != nil {
 		pub.Name = *ut.Name
 	}
+	if ut.Type != nil {
+		pub.Type = *ut.Type
+	}
 	return &pub
 }
 
@@ -100,6 +108,8 @@ type ClusterData struct {
 	MetricsURL string `form:"metrics-url" json:"metrics-url" xml:"metrics-url"`
 	// Cluster name
 	Name string `form:"name" json:"name" xml:"name"`
+	// Cluster type. Such as OSD, OSO, OCP, etc
+	Type string `form:"type" json:"type" xml:"type"`
 }
 
 // Validate validates the ClusterData type instance.
@@ -121,6 +131,9 @@ func (ut *ClusterData) Validate() (err error) {
 	}
 	if ut.AppDNS == "" {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "app-dns"))
+	}
+	if ut.Type == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "type"))
 	}
 
 	return
@@ -154,6 +167,8 @@ type fullClusterData struct {
 	ServiceAccountUsername *string `form:"service-account-username,omitempty" json:"service-account-username,omitempty" xml:"service-account-username,omitempty"`
 	// Token provider ID
 	TokenProviderID *string `form:"token-provider-id,omitempty" json:"token-provider-id,omitempty" xml:"token-provider-id,omitempty"`
+	// Cluster type. Such as OSD, OSO, OCP, etc
+	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
 }
 
 // Validate validates the fullClusterData type instance.
@@ -175,6 +190,9 @@ func (ut *fullClusterData) Validate() (err error) {
 	}
 	if ut.AppDNS == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "app-dns"))
+	}
+	if ut.Type == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "type"))
 	}
 	if ut.CapacityExhausted == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "capacity-exhausted"))
@@ -242,6 +260,9 @@ func (ut *fullClusterData) Publicize() *FullClusterData {
 	if ut.TokenProviderID != nil {
 		pub.TokenProviderID = *ut.TokenProviderID
 	}
+	if ut.Type != nil {
+		pub.Type = *ut.Type
+	}
 	return &pub
 }
 
@@ -273,6 +294,8 @@ type FullClusterData struct {
 	ServiceAccountUsername string `form:"service-account-username" json:"service-account-username" xml:"service-account-username"`
 	// Token provider ID
 	TokenProviderID string `form:"token-provider-id" json:"token-provider-id" xml:"token-provider-id"`
+	// Cluster type. Such as OSD, OSO, OCP, etc
+	Type string `form:"type" json:"type" xml:"type"`
 }
 
 // Validate validates the FullClusterData type instance.
@@ -294,6 +317,9 @@ func (ut *FullClusterData) Validate() (err error) {
 	}
 	if ut.AppDNS == "" {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "app-dns"))
+	}
+	if ut.Type == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "type"))
 	}
 
 	if ut.ServiceAccountToken == "" {
