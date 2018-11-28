@@ -41,46 +41,65 @@ type (
 	ShowStatusCommand struct {
 		PrettyPrint bool
 	}
+
+	// ClustersUserCommand is the command line data structure for the clusters action of user
+	ClustersUserCommand struct {
+		PrettyPrint bool
+	}
 )
 
 // RegisterCommands registers the resource action CLI commands.
 func RegisterCommands(app *cobra.Command, c *cluster.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
-		Use:   "show",
-		Short: `show action`,
+		Use:   "clusters",
+		Short: `Get clusters available to user`,
 	}
-	tmp1 := new(ShowClustersCommand)
+	tmp1 := new(ClustersUserCommand)
 	sub = &cobra.Command{
-		Use:   `clusters ["/api/clusters/"]`,
+		Use:   `user ["/api/user/clusters"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp2 := new(ShowStatusCommand)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show",
+		Short: `show action`,
+	}
+	tmp2 := new(ShowClustersCommand)
 	sub = &cobra.Command{
-		Use:   `status ["/api/status"]`,
+		Use:   `clusters ["/api/clusters/"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
 	tmp2.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "show-auth-client",
-		Short: `Get full cluster configuration including Auth information`,
-	}
-	tmp3 := new(ShowAuthClientClustersCommand)
+	tmp3 := new(ShowStatusCommand)
 	sub = &cobra.Command{
-		Use:   `clusters ["/api/clusters/auth"]`,
+		Use:   `status ["/api/status"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show-auth-client",
+		Short: `Get full cluster configuration including Auth information`,
+	}
+	tmp4 := new(ShowAuthClientClustersCommand)
+	sub = &cobra.Command{
+		Use:   `clusters ["/api/clusters/auth"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
+	}
+	tmp4.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -308,4 +327,28 @@ func (cmd *ShowStatusCommand) Run(c *cluster.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *ShowStatusCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
+}
+
+// Run makes the HTTP request corresponding to the ClustersUserCommand command.
+func (cmd *ClustersUserCommand) Run(c *cluster.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/api/user/clusters"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ClustersUser(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ClustersUserCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
 }
