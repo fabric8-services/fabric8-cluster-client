@@ -161,6 +161,8 @@ type fullClusterData struct {
 	MetricsURL *string `form:"metrics-url,omitempty" json:"metrics-url,omitempty" xml:"metrics-url,omitempty"`
 	// Cluster name
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// encrypted Service Account Token set to 'true'
+	SaTokenEncrypted *bool `form:"sa-token-encrypted,omitempty" json:"sa-token-encrypted,omitempty" xml:"sa-token-encrypted,omitempty"`
 	// Decrypted cluster wide token
 	ServiceAccountToken *string `form:"service-account-token,omitempty" json:"service-account-token,omitempty" xml:"service-account-token,omitempty"`
 	// Username of the cluster wide user
@@ -251,6 +253,9 @@ func (ut *fullClusterData) Publicize() *FullClusterData {
 	if ut.Name != nil {
 		pub.Name = *ut.Name
 	}
+	if ut.SaTokenEncrypted != nil {
+		pub.SaTokenEncrypted = ut.SaTokenEncrypted
+	}
 	if ut.ServiceAccountToken != nil {
 		pub.ServiceAccountToken = *ut.ServiceAccountToken
 	}
@@ -288,6 +293,8 @@ type FullClusterData struct {
 	MetricsURL string `form:"metrics-url" json:"metrics-url" xml:"metrics-url"`
 	// Cluster name
 	Name string `form:"name" json:"name" xml:"name"`
+	// encrypted Service Account Token set to 'true'
+	SaTokenEncrypted *bool `form:"sa-token-encrypted,omitempty" json:"sa-token-encrypted,omitempty" xml:"sa-token-encrypted,omitempty"`
 	// Decrypted cluster wide token
 	ServiceAccountToken string `form:"service-account-token" json:"service-account-token" xml:"service-account-token"`
 	// Username of the cluster wide user
