@@ -16,6 +16,35 @@ import (
 	"net/http"
 )
 
+// Holds the data to create a cluster (default view)
+//
+// Identifier: application/vnd.cluster+json; view=default
+type ClusterSingle struct {
+	Data *CreateClusterData `form:"data" json:"data" xml:"data"`
+	// An array of mixed types
+	Included []interface{} `form:"included,omitempty" json:"included,omitempty" xml:"included,omitempty"`
+}
+
+// Validate validates the ClusterSingle media type instance.
+func (mt *ClusterSingle) Validate() (err error) {
+	if mt.Data == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "data"))
+	}
+	if mt.Data != nil {
+		if err2 := mt.Data.Validate(); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// DecodeClusterSingle decodes the ClusterSingle instance encoded in resp body.
+func (c *Client) DecodeClusterSingle(resp *http.Response) (*ClusterSingle, error) {
+	var decoded ClusterSingle
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
 // Holds the response to a cluster list request (default view)
 //
 // Identifier: application/vnd.clusterlist+json; view=default

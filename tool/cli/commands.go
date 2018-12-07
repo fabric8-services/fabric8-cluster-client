@@ -14,6 +14,7 @@ package cli
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/fabric8-services/fabric8-cluster-client/cluster"
 	"github.com/goadesign/goa"
 	goaclient "github.com/goadesign/goa/client"
@@ -27,6 +28,13 @@ import (
 )
 
 type (
+	// CreateClustersCommand is the command line data structure for the create action of clusters
+	CreateClustersCommand struct {
+		Payload     string
+		ContentType string
+		PrettyPrint bool
+	}
+
 	// ShowClustersCommand is the command line data structure for the show action of clusters
 	ShowClustersCommand struct {
 		PrettyPrint bool
@@ -66,40 +74,79 @@ func RegisterCommands(app *cobra.Command, c *cluster.Client) {
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "show",
-		Short: `show action`,
+		Use:   "create",
+		Short: `Add a cluster configuration`,
 	}
-	tmp2 := new(ShowClustersCommand)
+	tmp2 := new(CreateClustersCommand)
 	sub = &cobra.Command{
 		Use:   `clusters ["/api/clusters/"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "data": {
+      "api-url": "Laudantium modi odio sit repudiandae.",
+      "app-dns": "Distinctio vero cumque architecto aliquam velit rerum.",
+      "auth-client-default-scope": "Omnis quia.",
+      "auth-client-id": "Eos aliquam nesciunt.",
+      "auth-client-secret": "Debitis est nisi.",
+      "capacity-exhausted": true,
+      "console-url": "Dicta repudiandae ut non sequi.",
+      "logging-url": "Expedita ut ut veritatis aliquam.",
+      "metrics-url": "Ducimus magnam labore similique.",
+      "name": "Omnis non.",
+      "service-account-token": "Ut modi.",
+      "service-account-username": "Odit quia.",
+      "token-provider-id": "Delectus reprehenderit maiores alias.",
+      "type": "Quidem et sequi modi placeat."
+   },
+   "included": [
+      false
+   ]
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
 	tmp2.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp3 := new(ShowStatusCommand)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show",
+		Short: `show action`,
+	}
+	tmp3 := new(ShowClustersCommand)
 	sub = &cobra.Command{
-		Use:   `status ["/api/status"]`,
+		Use:   `clusters ["/api/clusters/"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "show-auth-client",
-		Short: `Get full cluster configuration including Auth information`,
-	}
-	tmp4 := new(ShowAuthClientClustersCommand)
+	tmp4 := new(ShowStatusCommand)
 	sub = &cobra.Command{
-		Use:   `clusters ["/api/clusters/auth"]`,
+		Use:   `status ["/api/status"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
 	}
 	tmp4.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show-auth-client",
+		Short: `Get full cluster configuration including Auth information`,
+	}
+	tmp5 := new(ShowAuthClientClustersCommand)
+	sub = &cobra.Command{
+		Use:   `clusters ["/api/clusters/auth"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
+	}
+	tmp5.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -255,6 +302,39 @@ func boolArray(ins []string) ([]bool, error) {
 		vals = append(vals, *val)
 	}
 	return vals, nil
+}
+
+// Run makes the HTTP request corresponding to the CreateClustersCommand command.
+func (cmd *CreateClustersCommand) Run(c *cluster.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/api/clusters/"
+	}
+	var payload cluster.CreateClustersPayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.CreateClusters(ctx, path, &payload)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *CreateClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }
 
 // Run makes the HTTP request corresponding to the ShowClustersCommand command.

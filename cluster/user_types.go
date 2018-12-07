@@ -616,3 +616,179 @@ type RelationGenericList struct {
 	Links *GenericLinks          `form:"links,omitempty" json:"links,omitempty" xml:"links,omitempty"`
 	Meta  map[string]interface{} `form:"meta,omitempty" json:"meta,omitempty" xml:"meta,omitempty"`
 }
+
+// createClusterData user type.
+type createClusterData struct {
+	// API URL
+	APIURL *string `form:"api-url,omitempty" json:"api-url,omitempty" xml:"api-url,omitempty"`
+	// User application domain name in the cluster
+	AppDNS *string `form:"app-dns,omitempty" json:"app-dns,omitempty" xml:"app-dns,omitempty"`
+	// OAuth client default scope
+	AuthClientDefaultScope *string `form:"auth-client-default-scope,omitempty" json:"auth-client-default-scope,omitempty" xml:"auth-client-default-scope,omitempty"`
+	// OAuth client ID
+	AuthClientID *string `form:"auth-client-id,omitempty" json:"auth-client-id,omitempty" xml:"auth-client-id,omitempty"`
+	// OAuth client secret
+	AuthClientSecret *string `form:"auth-client-secret,omitempty" json:"auth-client-secret,omitempty" xml:"auth-client-secret,omitempty"`
+	// Cluster is full if set to 'true'
+	CapacityExhausted *bool `form:"capacity-exhausted,omitempty" json:"capacity-exhausted,omitempty" xml:"capacity-exhausted,omitempty"`
+	// Web console URL
+	ConsoleURL *string `form:"console-url,omitempty" json:"console-url,omitempty" xml:"console-url,omitempty"`
+	// Logging URL
+	LoggingURL *string `form:"logging-url,omitempty" json:"logging-url,omitempty" xml:"logging-url,omitempty"`
+	// Metrics URL
+	MetricsURL *string `form:"metrics-url,omitempty" json:"metrics-url,omitempty" xml:"metrics-url,omitempty"`
+	// Cluster name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Decrypted cluster wide token
+	ServiceAccountToken *string `form:"service-account-token,omitempty" json:"service-account-token,omitempty" xml:"service-account-token,omitempty"`
+	// Username of the cluster wide user
+	ServiceAccountUsername *string `form:"service-account-username,omitempty" json:"service-account-username,omitempty" xml:"service-account-username,omitempty"`
+	// Token provider ID
+	TokenProviderID *string `form:"token-provider-id,omitempty" json:"token-provider-id,omitempty" xml:"token-provider-id,omitempty"`
+	// Cluster type. Such as OSD, OSO, OCP, etc
+	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+}
+
+// Validate validates the createClusterData type instance.
+func (ut *createClusterData) Validate() (err error) {
+	if ut.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "name"))
+	}
+	if ut.APIURL == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "api-url"))
+	}
+	if ut.AppDNS == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "app-dns"))
+	}
+	if ut.Type == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "type"))
+	}
+	if ut.ServiceAccountToken == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "service-account-token"))
+	}
+	if ut.ServiceAccountUsername == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "service-account-username"))
+	}
+	if ut.AuthClientID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "auth-client-id"))
+	}
+	if ut.AuthClientSecret == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "auth-client-secret"))
+	}
+	if ut.AuthClientDefaultScope == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "auth-client-default-scope"))
+	}
+	return
+}
+
+// Publicize creates CreateClusterData from createClusterData
+func (ut *createClusterData) Publicize() *CreateClusterData {
+	var pub CreateClusterData
+	if ut.APIURL != nil {
+		pub.APIURL = *ut.APIURL
+	}
+	if ut.AppDNS != nil {
+		pub.AppDNS = *ut.AppDNS
+	}
+	if ut.AuthClientDefaultScope != nil {
+		pub.AuthClientDefaultScope = *ut.AuthClientDefaultScope
+	}
+	if ut.AuthClientID != nil {
+		pub.AuthClientID = *ut.AuthClientID
+	}
+	if ut.AuthClientSecret != nil {
+		pub.AuthClientSecret = *ut.AuthClientSecret
+	}
+	if ut.CapacityExhausted != nil {
+		pub.CapacityExhausted = ut.CapacityExhausted
+	}
+	if ut.ConsoleURL != nil {
+		pub.ConsoleURL = ut.ConsoleURL
+	}
+	if ut.LoggingURL != nil {
+		pub.LoggingURL = ut.LoggingURL
+	}
+	if ut.MetricsURL != nil {
+		pub.MetricsURL = ut.MetricsURL
+	}
+	if ut.Name != nil {
+		pub.Name = *ut.Name
+	}
+	if ut.ServiceAccountToken != nil {
+		pub.ServiceAccountToken = *ut.ServiceAccountToken
+	}
+	if ut.ServiceAccountUsername != nil {
+		pub.ServiceAccountUsername = *ut.ServiceAccountUsername
+	}
+	if ut.TokenProviderID != nil {
+		pub.TokenProviderID = ut.TokenProviderID
+	}
+	if ut.Type != nil {
+		pub.Type = *ut.Type
+	}
+	return &pub
+}
+
+// CreateClusterData user type.
+type CreateClusterData struct {
+	// API URL
+	APIURL string `form:"api-url" json:"api-url" xml:"api-url"`
+	// User application domain name in the cluster
+	AppDNS string `form:"app-dns" json:"app-dns" xml:"app-dns"`
+	// OAuth client default scope
+	AuthClientDefaultScope string `form:"auth-client-default-scope" json:"auth-client-default-scope" xml:"auth-client-default-scope"`
+	// OAuth client ID
+	AuthClientID string `form:"auth-client-id" json:"auth-client-id" xml:"auth-client-id"`
+	// OAuth client secret
+	AuthClientSecret string `form:"auth-client-secret" json:"auth-client-secret" xml:"auth-client-secret"`
+	// Cluster is full if set to 'true'
+	CapacityExhausted *bool `form:"capacity-exhausted,omitempty" json:"capacity-exhausted,omitempty" xml:"capacity-exhausted,omitempty"`
+	// Web console URL
+	ConsoleURL *string `form:"console-url,omitempty" json:"console-url,omitempty" xml:"console-url,omitempty"`
+	// Logging URL
+	LoggingURL *string `form:"logging-url,omitempty" json:"logging-url,omitempty" xml:"logging-url,omitempty"`
+	// Metrics URL
+	MetricsURL *string `form:"metrics-url,omitempty" json:"metrics-url,omitempty" xml:"metrics-url,omitempty"`
+	// Cluster name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Decrypted cluster wide token
+	ServiceAccountToken string `form:"service-account-token" json:"service-account-token" xml:"service-account-token"`
+	// Username of the cluster wide user
+	ServiceAccountUsername string `form:"service-account-username" json:"service-account-username" xml:"service-account-username"`
+	// Token provider ID
+	TokenProviderID *string `form:"token-provider-id,omitempty" json:"token-provider-id,omitempty" xml:"token-provider-id,omitempty"`
+	// Cluster type. Such as OSD, OSO, OCP, etc
+	Type string `form:"type" json:"type" xml:"type"`
+}
+
+// Validate validates the CreateClusterData type instance.
+func (ut *CreateClusterData) Validate() (err error) {
+	if ut.Name == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "name"))
+	}
+	if ut.APIURL == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "api-url"))
+	}
+	if ut.AppDNS == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "app-dns"))
+	}
+	if ut.Type == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "type"))
+	}
+	if ut.ServiceAccountToken == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "service-account-token"))
+	}
+	if ut.ServiceAccountUsername == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "service-account-username"))
+	}
+	if ut.AuthClientID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "auth-client-id"))
+	}
+	if ut.AuthClientSecret == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "auth-client-secret"))
+	}
+	if ut.AuthClientDefaultScope == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "auth-client-default-scope"))
+	}
+	return
+}
