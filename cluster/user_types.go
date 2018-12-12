@@ -792,3 +792,60 @@ func (ut *CreateClusterData) Validate() (err error) {
 	}
 	return
 }
+
+// linkIdentityToClusterData user type.
+type linkIdentityToClusterData struct {
+	// Cluster URL
+	ClusterURL *string `form:"cluster-url,omitempty" json:"cluster-url,omitempty" xml:"cluster-url,omitempty"`
+	// The id of corresponding Identity
+	IdentityID *string `form:"identity-id,omitempty" json:"identity-id,omitempty" xml:"identity-id,omitempty"`
+	// Ignore creation error if this identity already exists. By default 'True'
+	IgnoreIfAlreadyExists *bool `form:"ignore-if-already-exists,omitempty" json:"ignore-if-already-exists,omitempty" xml:"ignore-if-already-exists,omitempty"`
+}
+
+// Validate validates the linkIdentityToClusterData type instance.
+func (ut *linkIdentityToClusterData) Validate() (err error) {
+	if ut.ClusterURL == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "cluster-url"))
+	}
+	if ut.IdentityID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "identity-id"))
+	}
+	return
+}
+
+// Publicize creates LinkIdentityToClusterData from linkIdentityToClusterData
+func (ut *linkIdentityToClusterData) Publicize() *LinkIdentityToClusterData {
+	var pub LinkIdentityToClusterData
+	if ut.ClusterURL != nil {
+		pub.ClusterURL = *ut.ClusterURL
+	}
+	if ut.IdentityID != nil {
+		pub.IdentityID = *ut.IdentityID
+	}
+	if ut.IgnoreIfAlreadyExists != nil {
+		pub.IgnoreIfAlreadyExists = ut.IgnoreIfAlreadyExists
+	}
+	return &pub
+}
+
+// LinkIdentityToClusterData user type.
+type LinkIdentityToClusterData struct {
+	// Cluster URL
+	ClusterURL string `form:"cluster-url" json:"cluster-url" xml:"cluster-url"`
+	// The id of corresponding Identity
+	IdentityID string `form:"identity-id" json:"identity-id" xml:"identity-id"`
+	// Ignore creation error if this identity already exists. By default 'True'
+	IgnoreIfAlreadyExists *bool `form:"ignore-if-already-exists,omitempty" json:"ignore-if-already-exists,omitempty" xml:"ignore-if-already-exists,omitempty"`
+}
+
+// Validate validates the LinkIdentityToClusterData type instance.
+func (ut *LinkIdentityToClusterData) Validate() (err error) {
+	if ut.ClusterURL == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "cluster-url"))
+	}
+	if ut.IdentityID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "identity-id"))
+	}
+	return
+}
