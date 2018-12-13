@@ -104,6 +104,45 @@ func (c *Client) NewLinkIdentityToClusterClustersRequest(ctx context.Context, pa
 	return req, nil
 }
 
+// RemoveIdentityToClusterLinkClustersPath computes a request path to the removeIdentityToClusterLink action of clusters.
+func RemoveIdentityToClusterLinkClustersPath() string {
+
+	return fmt.Sprintf("/api/clusters/identities")
+}
+
+// Remove a identity cluster relation using a service account
+func (c *Client) RemoveIdentityToClusterLinkClusters(ctx context.Context, path string, payload *UnLinkIdentityToClusterdata) (*http.Response, error) {
+	req, err := c.NewRemoveIdentityToClusterLinkClustersRequest(ctx, path, payload)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewRemoveIdentityToClusterLinkClustersRequest create the request corresponding to the removeIdentityToClusterLink action endpoint of the clusters resource.
+func (c *Client) NewRemoveIdentityToClusterLinkClustersRequest(ctx context.Context, path string, payload *UnLinkIdentityToClusterdata) (*http.Request, error) {
+	var body bytes.Buffer
+	err := c.Encoder.Encode(payload, &body, "*/*")
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode body: %s", err)
+	}
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("DELETE", u.String(), &body)
+	if err != nil {
+		return nil, err
+	}
+	header := req.Header
+	header.Set("Content-Type", "application/json")
+	if c.JWTSigner != nil {
+		c.JWTSigner.Sign(req)
+	}
+	return req, nil
+}
+
 // ShowClustersPath computes a request path to the show action of clusters.
 func ShowClustersPath() string {
 
