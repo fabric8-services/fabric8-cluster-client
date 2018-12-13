@@ -849,3 +849,53 @@ func (ut *LinkIdentityToClusterData) Validate() (err error) {
 	}
 	return
 }
+
+// unLinkIdentityToClusterdata user type.
+type unLinkIdentityToClusterdata struct {
+	// Cluster URL
+	ClusterURL *string `form:"cluster-url,omitempty" json:"cluster-url,omitempty" xml:"cluster-url,omitempty"`
+	// The id of corresponding Identity
+	IdentityID *string `form:"identity-id,omitempty" json:"identity-id,omitempty" xml:"identity-id,omitempty"`
+}
+
+// Validate validates the unLinkIdentityToClusterdata type instance.
+func (ut *unLinkIdentityToClusterdata) Validate() (err error) {
+	if ut.ClusterURL == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "cluster-url"))
+	}
+	if ut.IdentityID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "identity-id"))
+	}
+	return
+}
+
+// Publicize creates UnLinkIdentityToClusterdata from unLinkIdentityToClusterdata
+func (ut *unLinkIdentityToClusterdata) Publicize() *UnLinkIdentityToClusterdata {
+	var pub UnLinkIdentityToClusterdata
+	if ut.ClusterURL != nil {
+		pub.ClusterURL = *ut.ClusterURL
+	}
+	if ut.IdentityID != nil {
+		pub.IdentityID = *ut.IdentityID
+	}
+	return &pub
+}
+
+// UnLinkIdentityToClusterdata user type.
+type UnLinkIdentityToClusterdata struct {
+	// Cluster URL
+	ClusterURL string `form:"cluster-url" json:"cluster-url" xml:"cluster-url"`
+	// The id of corresponding Identity
+	IdentityID string `form:"identity-id" json:"identity-id" xml:"identity-id"`
+}
+
+// Validate validates the UnLinkIdentityToClusterdata type instance.
+func (ut *UnLinkIdentityToClusterdata) Validate() (err error) {
+	if ut.ClusterURL == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "cluster-url"))
+	}
+	if ut.IdentityID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "identity-id"))
+	}
+	return
+}
