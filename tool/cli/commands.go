@@ -35,6 +35,13 @@ type (
 		PrettyPrint bool
 	}
 
+	// LinkIdentityToClusterClustersCommand is the command line data structure for the linkIdentityToCluster action of clusters
+	LinkIdentityToClusterClustersCommand struct {
+		Payload     string
+		ContentType string
+		PrettyPrint bool
+	}
+
 	// ShowClustersCommand is the command line data structure for the show action of clusters
 	ShowClustersCommand struct {
 		PrettyPrint bool
@@ -113,40 +120,63 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "show",
-		Short: `show action`,
+		Use:   "link-identity-to-cluster",
+		Short: `create a identitycluster using a service account`,
 	}
-	tmp3 := new(ShowClustersCommand)
+	tmp3 := new(LinkIdentityToClusterClustersCommand)
 	sub = &cobra.Command{
-		Use:   `clusters ["/api/clusters/"]`,
+		Use:   `clusters ["/api/clusters/identities"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "cluster-url": "Qui odio temporibus veritatis.",
+   "identity-id": "Quis consequuntur ipsam qui.",
+   "ignore-if-already-exists": false
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp4 := new(ShowStatusCommand)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show",
+		Short: `show action`,
+	}
+	tmp4 := new(ShowClustersCommand)
 	sub = &cobra.Command{
-		Use:   `status ["/api/status"]`,
+		Use:   `clusters ["/api/clusters/"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
 	}
 	tmp4.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "show-auth-client",
-		Short: `Get full cluster configuration including Auth information`,
-	}
-	tmp5 := new(ShowAuthClientClustersCommand)
+	tmp5 := new(ShowStatusCommand)
 	sub = &cobra.Command{
-		Use:   `clusters ["/api/clusters/auth"]`,
+		Use:   `status ["/api/status"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
 	}
 	tmp5.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show-auth-client",
+		Short: `Get full cluster configuration including Auth information`,
+	}
+	tmp6 := new(ShowAuthClientClustersCommand)
+	sub = &cobra.Command{
+		Use:   `clusters ["/api/clusters/auth"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
+	}
+	tmp6.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -333,6 +363,39 @@ func (cmd *CreateClustersCommand) Run(c *cluster.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *CreateClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
+}
+
+// Run makes the HTTP request corresponding to the LinkIdentityToClusterClustersCommand command.
+func (cmd *LinkIdentityToClusterClustersCommand) Run(c *cluster.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/api/clusters/identities"
+	}
+	var payload cluster.LinkIdentityToClusterData
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.LinkIdentityToClusterClusters(ctx, path, &payload)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *LinkIdentityToClusterClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
 	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
 	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }
