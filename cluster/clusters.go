@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	uuid "github.com/goadesign/goa/uuid"
 	"net/http"
 	"net/url"
 )
@@ -104,6 +105,70 @@ func (c *Client) NewLinkIdentityToClusterClustersRequest(ctx context.Context, pa
 	return req, nil
 }
 
+// ListClustersPath computes a request path to the list action of clusters.
+func ListClustersPath() string {
+
+	return fmt.Sprintf("/api/clusters/")
+}
+
+// Get all cluster configurations
+func (c *Client) ListClusters(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewListClustersRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewListClustersRequest create the request corresponding to the list action endpoint of the clusters resource.
+func (c *Client) NewListClustersRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		c.JWTSigner.Sign(req)
+	}
+	return req, nil
+}
+
+// ListForAuthClientClustersPath computes a request path to the listForAuthClient action of clusters.
+func ListForAuthClientClustersPath() string {
+
+	return fmt.Sprintf("/api/clusters/auth")
+}
+
+// Get all cluster configurations (including Auth information)
+func (c *Client) ListForAuthClientClusters(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewListForAuthClientClustersRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewListForAuthClientClustersRequest create the request corresponding to the listForAuthClient action endpoint of the clusters resource.
+func (c *Client) NewListForAuthClientClustersRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		c.JWTSigner.Sign(req)
+	}
+	return req, nil
+}
+
 // RemoveIdentityToClusterLinkClustersPath computes a request path to the removeIdentityToClusterLink action of clusters.
 func RemoveIdentityToClusterLinkClustersPath() string {
 
@@ -144,12 +209,13 @@ func (c *Client) NewRemoveIdentityToClusterLinkClustersRequest(ctx context.Conte
 }
 
 // ShowClustersPath computes a request path to the show action of clusters.
-func ShowClustersPath() string {
+func ShowClustersPath(clusterID uuid.UUID) string {
+	param0 := clusterID.String()
 
-	return fmt.Sprintf("/api/clusters/")
+	return fmt.Sprintf("/api/clusters/%s", param0)
 }
 
-// Get clusters configuration
+// Get single cluster configuration
 func (c *Client) ShowClusters(ctx context.Context, path string) (*http.Response, error) {
 	req, err := c.NewShowClustersRequest(ctx, path)
 	if err != nil {
@@ -175,23 +241,24 @@ func (c *Client) NewShowClustersRequest(ctx context.Context, path string) (*http
 	return req, nil
 }
 
-// ShowAuthClientClustersPath computes a request path to the showAuthClient action of clusters.
-func ShowAuthClientClustersPath() string {
+// ShowForAuthClientClustersPath computes a request path to the showForAuthClient action of clusters.
+func ShowForAuthClientClustersPath(clusterID uuid.UUID) string {
+	param0 := clusterID.String()
 
-	return fmt.Sprintf("/api/clusters/auth")
+	return fmt.Sprintf("/api/clusters/%s/auth", param0)
 }
 
-// Get full cluster configuration including Auth information
-func (c *Client) ShowAuthClientClusters(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewShowAuthClientClustersRequest(ctx, path)
+// Get single cluster configuration (including Auth information)
+func (c *Client) ShowForAuthClientClusters(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewShowForAuthClientClustersRequest(ctx, path)
 	if err != nil {
 		return nil, err
 	}
 	return c.Client.Do(ctx, req)
 }
 
-// NewShowAuthClientClustersRequest create the request corresponding to the showAuthClient action endpoint of the clusters resource.
-func (c *Client) NewShowAuthClientClustersRequest(ctx context.Context, path string) (*http.Request, error) {
+// NewShowForAuthClientClustersRequest create the request corresponding to the showForAuthClient action endpoint of the clusters resource.
+func (c *Client) NewShowForAuthClientClustersRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"

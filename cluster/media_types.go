@@ -16,11 +16,11 @@ import (
 	"net/http"
 )
 
-// Holds the data to create a cluster (default view)
+// Holds the response to a cluster request (default view)
 //
 // Identifier: application/vnd.cluster+json; view=default
 type ClusterSingle struct {
-	Data *CreateClusterData `form:"data" json:"data" xml:"data"`
+	Data *ClusterData `form:"data" json:"data" xml:"data"`
 	// An array of mixed types
 	Included []interface{} `form:"included,omitempty" json:"included,omitempty" xml:"included,omitempty"`
 }
@@ -72,6 +72,64 @@ func (mt *ClusterList) Validate() (err error) {
 // DecodeClusterList decodes the ClusterList instance encoded in resp body.
 func (c *Client) DecodeClusterList(resp *http.Response) (*ClusterList, error) {
 	var decoded ClusterList
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// Holds the data to create a cluster (default view)
+//
+// Identifier: application/vnd.createcluster+json; view=default
+type CreateClusterSingle struct {
+	Data *CreateClusterData `form:"data" json:"data" xml:"data"`
+	// An array of mixed types
+	Included []interface{} `form:"included,omitempty" json:"included,omitempty" xml:"included,omitempty"`
+}
+
+// Validate validates the CreateClusterSingle media type instance.
+func (mt *CreateClusterSingle) Validate() (err error) {
+	if mt.Data == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "data"))
+	}
+	if mt.Data != nil {
+		if err2 := mt.Data.Validate(); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// DecodeCreateClusterSingle decodes the CreateClusterSingle instance encoded in resp body.
+func (c *Client) DecodeCreateClusterSingle(resp *http.Response) (*CreateClusterSingle, error) {
+	var decoded CreateClusterSingle
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// Holds the response to a cluster request (default view)
+//
+// Identifier: application/vnd.fullcluster+json; view=default
+type FullClusterSingle struct {
+	Data *FullClusterData `form:"data" json:"data" xml:"data"`
+	// An array of mixed types
+	Included []interface{} `form:"included,omitempty" json:"included,omitempty" xml:"included,omitempty"`
+}
+
+// Validate validates the FullClusterSingle media type instance.
+func (mt *FullClusterSingle) Validate() (err error) {
+	if mt.Data == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "data"))
+	}
+	if mt.Data != nil {
+		if err2 := mt.Data.Validate(); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// DecodeFullClusterSingle decodes the FullClusterSingle instance encoded in resp body.
+func (c *Client) DecodeFullClusterSingle(resp *http.Response) (*FullClusterSingle, error) {
+	var decoded FullClusterSingle
 	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
 	return &decoded, err
 }
