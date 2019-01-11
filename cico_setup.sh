@@ -33,7 +33,6 @@ function install_deps() {
   echo 'CICO: Dependencies installed'
 }
 
-
 function prepare() {
   # Let's test
   make docker-start
@@ -46,4 +45,14 @@ function cico_setup() {
   load_jenkins_vars;
   install_deps;
   prepare;
+}
+
+function run_tests_with_coverage() {
+  make docker-test-unit
+
+  # Upload coverage to codecov.io
+  # -t <upload_token> copy from https://codecov.io/gh/fabric8-services/fabric8-cluster-client/settings
+  bash <(curl -s https://codecov.io/bash) -t 8c44edb8-9d93-4404-b1e3-90691befff68
+
+  echo "CICO: ran tests and uploaded coverage"
 }

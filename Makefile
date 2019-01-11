@@ -20,6 +20,9 @@ DEP_VERSION=v0.5.0
 GO_BIN := $(shell command -v $(GO_BIN_NAME) 2> /dev/null)
 DOCKER_BIN := $(shell command -v $(DOCKER_BIN_NAME) 2> /dev/null)
 
+# for test targets
+include ./.make/test.mk
+
 # Define and get the vakue for UNAME_S variable from shell
 UNAME_S := $(shell uname -s)
 
