@@ -66,6 +66,39 @@ func (c *Client) NewCreateClustersRequest(ctx context.Context, path string, payl
 	return req, nil
 }
 
+// DeleteClustersPath computes a request path to the delete action of clusters.
+func DeleteClustersPath(clusterID uuid.UUID) string {
+	param0 := clusterID.String()
+
+	return fmt.Sprintf("/api/clusters/%s", param0)
+}
+
+// Delete a cluster configuration
+func (c *Client) DeleteClusters(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewDeleteClustersRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewDeleteClustersRequest create the request corresponding to the delete action endpoint of the clusters resource.
+func (c *Client) NewDeleteClustersRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("DELETE", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		c.JWTSigner.Sign(req)
+	}
+	return req, nil
+}
+
 // LinkIdentityToClusterClustersPath computes a request path to the linkIdentityToCluster action of clusters.
 func LinkIdentityToClusterClustersPath() string {
 

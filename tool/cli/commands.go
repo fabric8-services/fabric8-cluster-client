@@ -35,6 +35,13 @@ type (
 		PrettyPrint bool
 	}
 
+	// DeleteClustersCommand is the command line data structure for the delete action of clusters
+	DeleteClustersCommand struct {
+		// the ID of the cluster to delete
+		ClusterID   string
+		PrettyPrint bool
+	}
+
 	// LinkIdentityToClusterClustersCommand is the command line data structure for the linkIdentityToCluster action of clusters
 	LinkIdentityToClusterClustersCommand struct {
 		Payload     string
@@ -141,10 +148,24 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "delete",
+		Short: `Delete a cluster configuration`,
+	}
+	tmp3 := new(DeleteClustersCommand)
+	sub = &cobra.Command{
+		Use:   `clusters ["/api/clusters/CLUSTERID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+	}
+	tmp3.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "link-identity-to-cluster",
 		Short: `create a identitycluster using a service account`,
 	}
-	tmp3 := new(LinkIdentityToClusterClustersCommand)
+	tmp4 := new(LinkIdentityToClusterClustersCommand)
 	sub = &cobra.Command{
 		Use:   `clusters ["/api/clusters/identities"]`,
 		Short: ``,
@@ -157,33 +178,19 @@ Payload example:
    "identity-id": "Placeat voluptatem qui in cumque qui.",
    "ignore-if-already-exists": false
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
-	}
-	tmp3.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
-	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "list",
-		Short: `Get all cluster configurations`,
-	}
-	tmp4 := new(ListClustersCommand)
-	sub = &cobra.Command{
-		Use:   `clusters ["/api/clusters/"]`,
-		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
 	}
 	tmp4.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "list-for-auth-client",
-		Short: `Get all cluster configurations (including Auth information)`,
+		Use:   "list",
+		Short: `Get all cluster configurations`,
 	}
-	tmp5 := new(ListForAuthClientClustersCommand)
+	tmp5 := new(ListClustersCommand)
 	sub = &cobra.Command{
-		Use:   `clusters ["/api/clusters/auth"]`,
+		Use:   `clusters ["/api/clusters/"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
 	}
@@ -192,10 +199,24 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "list-for-auth-client",
+		Short: `Get all cluster configurations (including Auth information)`,
+	}
+	tmp6 := new(ListForAuthClientClustersCommand)
+	sub = &cobra.Command{
+		Use:   `clusters ["/api/clusters/auth"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
+	}
+	tmp6.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "remove-identity-to-cluster-link",
 		Short: `Remove a identity cluster relation using a service account`,
 	}
-	tmp6 := new(RemoveIdentityToClusterLinkClustersCommand)
+	tmp7 := new(RemoveIdentityToClusterLinkClustersCommand)
 	sub = &cobra.Command{
 		Use:   `clusters ["/api/clusters/identities"]`,
 		Short: ``,
@@ -207,47 +228,47 @@ Payload example:
    "cluster-url": "Voluptas omnis consequatur odit vel inventore.",
    "identity-id": "Et quidem."
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
 	}
-	tmp6.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp7.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp7.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "show",
 		Short: `show action`,
 	}
-	tmp7 := new(ShowClustersCommand)
+	tmp8 := new(ShowClustersCommand)
 	sub = &cobra.Command{
 		Use:   `clusters ["/api/clusters/CLUSTERID"]`,
-		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
-	}
-	tmp7.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp7.PrettyPrint, "pp", false, "Pretty print response body")
-	command.AddCommand(sub)
-	tmp8 := new(ShowStatusCommand)
-	sub = &cobra.Command{
-		Use:   `status ["/api/status"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp8.Run(c, args) },
 	}
 	tmp8.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp8.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "show-for-auth-client",
-		Short: `Get single cluster configuration (including Auth information)`,
-	}
-	tmp9 := new(ShowForAuthClientClustersCommand)
+	tmp9 := new(ShowStatusCommand)
 	sub = &cobra.Command{
-		Use:   `clusters ["/api/clusters/CLUSTERID/auth"]`,
+		Use:   `status ["/api/status"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp9.Run(c, args) },
 	}
 	tmp9.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp9.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show-for-auth-client",
+		Short: `Get single cluster configuration (including Auth information)`,
+	}
+	tmp10 := new(ShowForAuthClientClustersCommand)
+	sub = &cobra.Command{
+		Use:   `clusters ["/api/clusters/CLUSTERID/auth"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp10.Run(c, args) },
+	}
+	tmp10.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp10.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -436,6 +457,32 @@ func (cmd *CreateClustersCommand) Run(c *cluster.Client, args []string) error {
 func (cmd *CreateClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
 	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
 	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
+}
+
+// Run makes the HTTP request corresponding to the DeleteClustersCommand command.
+func (cmd *DeleteClustersCommand) Run(c *cluster.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = fmt.Sprintf("/api/clusters/%v", cmd.ClusterID)
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.DeleteClusters(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *DeleteClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
+	var clusterID string
+	cc.Flags().StringVar(&cmd.ClusterID, "clusterID", clusterID, `the ID of the cluster to delete`)
 }
 
 // Run makes the HTTP request corresponding to the LinkIdentityToClusterClustersCommand command.
