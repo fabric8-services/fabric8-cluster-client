@@ -99,6 +99,76 @@ func (c *Client) NewDeleteClustersRequest(ctx context.Context, path string) (*ht
 	return req, nil
 }
 
+// FindByURLClustersPath computes a request path to the findByURL action of clusters.
+func FindByURLClustersPath() string {
+
+	return fmt.Sprintf("/api/clusters/")
+}
+
+// Get single cluster configuration given its URL
+func (c *Client) FindByURLClusters(ctx context.Context, path string, clusterURL string) (*http.Response, error) {
+	req, err := c.NewFindByURLClustersRequest(ctx, path, clusterURL)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewFindByURLClustersRequest create the request corresponding to the findByURL action endpoint of the clusters resource.
+func (c *Client) NewFindByURLClustersRequest(ctx context.Context, path string, clusterURL string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	values.Set("cluster-url", clusterURL)
+	u.RawQuery = values.Encode()
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		c.JWTSigner.Sign(req)
+	}
+	return req, nil
+}
+
+// FindByURLForAuthClustersPath computes a request path to the findByURLForAuth action of clusters.
+func FindByURLForAuthClustersPath() string {
+
+	return fmt.Sprintf("/api/clusters/auth")
+}
+
+// Get single cluster configuration given its URL, with full info
+func (c *Client) FindByURLForAuthClusters(ctx context.Context, path string, clusterURL string) (*http.Response, error) {
+	req, err := c.NewFindByURLForAuthClustersRequest(ctx, path, clusterURL)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewFindByURLForAuthClustersRequest create the request corresponding to the findByURLForAuth action endpoint of the clusters resource.
+func (c *Client) NewFindByURLForAuthClustersRequest(ctx context.Context, path string, clusterURL string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	values.Set("cluster-url", clusterURL)
+	u.RawQuery = values.Encode()
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		c.JWTSigner.Sign(req)
+	}
+	return req, nil
+}
+
 // LinkIdentityToClusterClustersPath computes a request path to the linkIdentityToCluster action of clusters.
 func LinkIdentityToClusterClustersPath() string {
 
