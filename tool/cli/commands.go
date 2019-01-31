@@ -52,14 +52,18 @@ type (
 	// ListClustersCommand is the command line data structure for the list action of clusters
 	ListClustersCommand struct {
 		// the URL of the cluster to show
-		ClusterURL  string
+		ClusterURL string
+		// the type of the clusters to return
+		Type        string
 		PrettyPrint bool
 	}
 
 	// ListForAuthClientClustersCommand is the command line data structure for the listForAuthClient action of clusters
 	ListForAuthClientClustersCommand struct {
 		// the URL of the cluster to show
-		ClusterURL  string
+		ClusterURL string
+		// the type of the clusters to return ('OSD', 'OCP' or 'OSO'). If none is specified, all types of clusters will be returned
+		Type        string
 		PrettyPrint bool
 	}
 
@@ -190,7 +194,7 @@ Payload example:
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "list",
-		Short: `Get all cluster configurations unless the 'cluster-url' is specified, in which case a single cluster is returned`,
+		Short: `Get all cluster configurations. If the 'cluster-url' query parameter is set, then a single cluster is returned. If the 'type' query parameter is set then only the clusters with the matchin type are returned`,
 	}
 	tmp5 := new(ListClustersCommand)
 	sub = &cobra.Command{
@@ -532,7 +536,7 @@ func (cmd *ListClustersCommand) Run(c *cluster.Client, args []string) error {
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.ListClusters(ctx, path, stringFlagVal("cluster-url", cmd.ClusterURL))
+	resp, err := c.ListClusters(ctx, path, stringFlagVal("cluster-url", cmd.ClusterURL), stringFlagVal("type", cmd.Type))
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -546,6 +550,8 @@ func (cmd *ListClustersCommand) Run(c *cluster.Client, args []string) error {
 func (cmd *ListClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
 	var clusterURL string
 	cc.Flags().StringVar(&cmd.ClusterURL, "cluster-url", clusterURL, `the URL of the cluster to show`)
+	var type_ string
+	cc.Flags().StringVar(&cmd.Type, "type", type_, `the type of the clusters to return`)
 }
 
 // Run makes the HTTP request corresponding to the ListForAuthClientClustersCommand command.
@@ -558,7 +564,7 @@ func (cmd *ListForAuthClientClustersCommand) Run(c *cluster.Client, args []strin
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.ListForAuthClientClusters(ctx, path, stringFlagVal("cluster-url", cmd.ClusterURL))
+	resp, err := c.ListForAuthClientClusters(ctx, path, stringFlagVal("cluster-url", cmd.ClusterURL), stringFlagVal("type", cmd.Type))
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -572,6 +578,8 @@ func (cmd *ListForAuthClientClustersCommand) Run(c *cluster.Client, args []strin
 func (cmd *ListForAuthClientClustersCommand) RegisterFlags(cc *cobra.Command, c *cluster.Client) {
 	var clusterURL string
 	cc.Flags().StringVar(&cmd.ClusterURL, "cluster-url", clusterURL, `the URL of the cluster to show`)
+	var type_ string
+	cc.Flags().StringVar(&cmd.Type, "type", type_, `the type of the clusters to return ('OSD', 'OCP' or 'OSO'). If none is specified, all types of clusters will be returned`)
 }
 
 // Run makes the HTTP request corresponding to the RemoveIdentityToClusterLinkClustersCommand command.

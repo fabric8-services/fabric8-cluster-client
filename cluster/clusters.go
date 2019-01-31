@@ -144,9 +144,9 @@ func ListClustersPath() string {
 	return fmt.Sprintf("/api/clusters/")
 }
 
-// Get all cluster configurations unless the 'cluster-url' is specified, in which case a single cluster is returned
-func (c *Client) ListClusters(ctx context.Context, path string, clusterURL *string) (*http.Response, error) {
-	req, err := c.NewListClustersRequest(ctx, path, clusterURL)
+// Get all cluster configurations. If the 'cluster-url' query parameter is set, then a single cluster is returned. If the 'type' query parameter is set then only the clusters with the matchin type are returned
+func (c *Client) ListClusters(ctx context.Context, path string, clusterURL *string, type_ *string) (*http.Response, error) {
+	req, err := c.NewListClustersRequest(ctx, path, clusterURL, type_)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func (c *Client) ListClusters(ctx context.Context, path string, clusterURL *stri
 }
 
 // NewListClustersRequest create the request corresponding to the list action endpoint of the clusters resource.
-func (c *Client) NewListClustersRequest(ctx context.Context, path string, clusterURL *string) (*http.Request, error) {
+func (c *Client) NewListClustersRequest(ctx context.Context, path string, clusterURL *string, type_ *string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
@@ -163,6 +163,9 @@ func (c *Client) NewListClustersRequest(ctx context.Context, path string, cluste
 	values := u.Query()
 	if clusterURL != nil {
 		values.Set("cluster-url", *clusterURL)
+	}
+	if type_ != nil {
+		values.Set("type", *type_)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -182,8 +185,8 @@ func ListForAuthClientClustersPath() string {
 }
 
 // Get all cluster configurations unless the 'cluster-url' is specified. This endpoint returns all sensitive information
-func (c *Client) ListForAuthClientClusters(ctx context.Context, path string, clusterURL *string) (*http.Response, error) {
-	req, err := c.NewListForAuthClientClustersRequest(ctx, path, clusterURL)
+func (c *Client) ListForAuthClientClusters(ctx context.Context, path string, clusterURL *string, type_ *string) (*http.Response, error) {
+	req, err := c.NewListForAuthClientClustersRequest(ctx, path, clusterURL, type_)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +194,7 @@ func (c *Client) ListForAuthClientClusters(ctx context.Context, path string, clu
 }
 
 // NewListForAuthClientClustersRequest create the request corresponding to the listForAuthClient action endpoint of the clusters resource.
-func (c *Client) NewListForAuthClientClustersRequest(ctx context.Context, path string, clusterURL *string) (*http.Request, error) {
+func (c *Client) NewListForAuthClientClustersRequest(ctx context.Context, path string, clusterURL *string, type_ *string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
@@ -200,6 +203,9 @@ func (c *Client) NewListForAuthClientClustersRequest(ctx context.Context, path s
 	values := u.Query()
 	if clusterURL != nil {
 		values.Set("cluster-url", *clusterURL)
+	}
+	if type_ != nil {
+		values.Set("type", *type_)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
