@@ -99,76 +99,6 @@ func (c *Client) NewDeleteClustersRequest(ctx context.Context, path string) (*ht
 	return req, nil
 }
 
-// FindByURLClustersPath computes a request path to the findByURL action of clusters.
-func FindByURLClustersPath() string {
-
-	return fmt.Sprintf("/api/clusters/")
-}
-
-// Get single cluster configuration given its URL
-func (c *Client) FindByURLClusters(ctx context.Context, path string, clusterURL string) (*http.Response, error) {
-	req, err := c.NewFindByURLClustersRequest(ctx, path, clusterURL)
-	if err != nil {
-		return nil, err
-	}
-	return c.Client.Do(ctx, req)
-}
-
-// NewFindByURLClustersRequest create the request corresponding to the findByURL action endpoint of the clusters resource.
-func (c *Client) NewFindByURLClustersRequest(ctx context.Context, path string, clusterURL string) (*http.Request, error) {
-	scheme := c.Scheme
-	if scheme == "" {
-		scheme = "http"
-	}
-	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	values := u.Query()
-	values.Set("cluster-url", clusterURL)
-	u.RawQuery = values.Encode()
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	if c.JWTSigner != nil {
-		c.JWTSigner.Sign(req)
-	}
-	return req, nil
-}
-
-// FindByURLForAuthClustersPath computes a request path to the findByURLForAuth action of clusters.
-func FindByURLForAuthClustersPath() string {
-
-	return fmt.Sprintf("/api/clusters/auth")
-}
-
-// Get single cluster configuration given its URL, with full info
-func (c *Client) FindByURLForAuthClusters(ctx context.Context, path string, clusterURL string) (*http.Response, error) {
-	req, err := c.NewFindByURLForAuthClustersRequest(ctx, path, clusterURL)
-	if err != nil {
-		return nil, err
-	}
-	return c.Client.Do(ctx, req)
-}
-
-// NewFindByURLForAuthClustersRequest create the request corresponding to the findByURLForAuth action endpoint of the clusters resource.
-func (c *Client) NewFindByURLForAuthClustersRequest(ctx context.Context, path string, clusterURL string) (*http.Request, error) {
-	scheme := c.Scheme
-	if scheme == "" {
-		scheme = "http"
-	}
-	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	values := u.Query()
-	values.Set("cluster-url", clusterURL)
-	u.RawQuery = values.Encode()
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	if c.JWTSigner != nil {
-		c.JWTSigner.Sign(req)
-	}
-	return req, nil
-}
-
 // LinkIdentityToClusterClustersPath computes a request path to the linkIdentityToCluster action of clusters.
 func LinkIdentityToClusterClustersPath() string {
 
@@ -214,9 +144,9 @@ func ListClustersPath() string {
 	return fmt.Sprintf("/api/clusters/")
 }
 
-// Get all cluster configurations
-func (c *Client) ListClusters(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewListClustersRequest(ctx, path)
+// Get all cluster configurations unless the 'cluster-url' is specified, in which case a single cluster is returned
+func (c *Client) ListClusters(ctx context.Context, path string, clusterURL *string) (*http.Response, error) {
+	req, err := c.NewListClustersRequest(ctx, path, clusterURL)
 	if err != nil {
 		return nil, err
 	}
@@ -224,12 +154,17 @@ func (c *Client) ListClusters(ctx context.Context, path string) (*http.Response,
 }
 
 // NewListClustersRequest create the request corresponding to the list action endpoint of the clusters resource.
-func (c *Client) NewListClustersRequest(ctx context.Context, path string) (*http.Request, error) {
+func (c *Client) NewListClustersRequest(ctx context.Context, path string, clusterURL *string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	if clusterURL != nil {
+		values.Set("cluster-url", *clusterURL)
+	}
+	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
@@ -246,9 +181,9 @@ func ListForAuthClientClustersPath() string {
 	return fmt.Sprintf("/api/clusters/auth")
 }
 
-// Get all cluster configurations (including Auth information)
-func (c *Client) ListForAuthClientClusters(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewListForAuthClientClustersRequest(ctx, path)
+// Get all cluster configurations unless the 'cluster-url' is specified. This endpoint returns all sensitive information
+func (c *Client) ListForAuthClientClusters(ctx context.Context, path string, clusterURL *string) (*http.Response, error) {
+	req, err := c.NewListForAuthClientClustersRequest(ctx, path, clusterURL)
 	if err != nil {
 		return nil, err
 	}
@@ -256,12 +191,17 @@ func (c *Client) ListForAuthClientClusters(ctx context.Context, path string) (*h
 }
 
 // NewListForAuthClientClustersRequest create the request corresponding to the listForAuthClient action endpoint of the clusters resource.
-func (c *Client) NewListForAuthClientClustersRequest(ctx context.Context, path string) (*http.Request, error) {
+func (c *Client) NewListForAuthClientClustersRequest(ctx context.Context, path string, clusterURL *string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	if clusterURL != nil {
+		values.Set("cluster-url", *clusterURL)
+	}
+	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
